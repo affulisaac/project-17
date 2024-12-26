@@ -16,6 +16,16 @@ export function formatCampaignStats(campaign: Campaign) {
   };
 }
 
+export const convertObjectToSnakeCase = (obj: Record<string, any>) => {
+  return Object.keys(obj).reduce((acc, key) => {
+    const newKey = key.replace(/([A-Z])/g, "_$1").toLowerCase();
+    return {
+      ...acc,
+      [newKey]: obj[key],
+    };
+  }, {});
+}
+
 export function transformData(data: any) {
   return {
       campaign: {

@@ -1,50 +1,45 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { FileText, Lightbulb, Building2, Rocket } from "lucide-react";
 import type { BusinessType } from "../campaign-creation-stepper";
 
 interface BusinessStageDetailsProps {
   data: {
     businessType: BusinessType;
-    concept?: {
-      problem: string;
-      solution: string;
-      marketResearch: string;
-    };
-    businessPlan?: {
-      strategy: string;
-      resources: string;
-      challenges: string;
-    };
-    operations?: {
-      metrics: {
-        revenue: number;
-        customers: number;
-        growth: number;
-      };
-      performance: string;
-      team: string;
-    };
+    problemStatement: string;
+    solution: string;
+    marketResearch: string;
+    businessStrategy: string;
+    requiredResources: string;
+    challenges: string;
+    revenue: number;
+    customerBase: number;
+    growthRate: number;
+    performance: string;
+    team: string;
+    currentOperations: string;
+    numberOfEmployees: number;
   };
   onUpdate: (data: any) => void;
 }
 
-export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsProps) {
+export function BusinessStageDetails({
+  data,
+  onUpdate,
+}: BusinessStageDetailsProps) {
   const renderIdeaFields = () => (
     <div className="space-y-6">
       <div className="space-y-4">
         <div>
           <Label>Problem Statement</Label>
           <Textarea
-            value={data.concept?.problem || ""}
+            value={data.problemStatement || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                concept: { ...data.concept, problem: e.target.value },
+                concept: { ...data, problemStatement: e.target.value },
               })
             }
             placeholder="Describe the problem your idea solves"
@@ -55,11 +50,11 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
         <div>
           <Label>Solution</Label>
           <Textarea
-            value={data.concept?.solution || ""}
+            value={data?.solution || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                concept: { ...data.concept, solution: e.target.value },
+                concept: { ...data, solution: e.target.value },
               })
             }
             placeholder="Explain your proposed solution"
@@ -70,11 +65,11 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
         <div>
           <Label>Market Research</Label>
           <Textarea
-            value={data.concept?.marketResearch || ""}
+            value={data?.marketResearch || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                concept: { ...data.concept, marketResearch: e.target.value },
+                concept: { ...data, marketResearch: e.target.value },
               })
             }
             placeholder="Share your market research findings"
@@ -82,23 +77,6 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
           />
         </div>
       </div>
-
-      <Card className="p-4">
-        <div className="flex items-start gap-4">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Lightbulb className="h-6 w-6 text-primary" />
-          </div>
-          <div className="space-y-1">
-            <h4 className="font-medium">Idea Validation Tips</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Clearly define the problem and target audience</li>
-              <li>• Include market size and growth potential</li>
-              <li>• Highlight your unique value proposition</li>
-              <li>• Provide evidence of initial validation or feedback</li>
-            </ul>
-          </div>
-        </div>
-      </Card>
     </div>
   );
 
@@ -108,11 +86,11 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
         <div>
           <Label>Business Strategy</Label>
           <Textarea
-            value={data.businessPlan?.strategy || ""}
+            value={data?.businessStrategy || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                businessPlan: { ...data.businessPlan, strategy: e.target.value },
+                businessStrategy: e.target.value,
               })
             }
             placeholder="Outline your business strategy and execution plan"
@@ -123,11 +101,11 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
         <div>
           <Label>Required Resources</Label>
           <Textarea
-            value={data.businessPlan?.resources || ""}
+            value={data?.requiredResources || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                businessPlan: { ...data.businessPlan, resources: e.target.value },
+                requiredResources: e.target.value,
               })
             }
             placeholder="List the resources needed to start (team, equipment, etc.)"
@@ -138,57 +116,39 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
         <div>
           <Label>Anticipated Challenges</Label>
           <Textarea
-            value={data.businessPlan?.challenges || ""}
+            value={data?.challenges || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                businessPlan: { ...data.businessPlan, challenges: e.target.value },
+                challenges: e.target.value,
               })
             }
             placeholder="Describe potential challenges and mitigation strategies"
             rows={3}
           />
         </div>
-      </div>
 
-      <Card className="p-4">
-        <div className="flex items-start gap-4">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Rocket className="h-6 w-6 text-primary" />
-          </div>
-          <div className="space-y-1">
-            <h4 className="font-medium">Launch Planning Tips</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Detail your go-to-market strategy</li>
-              <li>• Include timeline and key milestones</li>
-              <li>• Outline required permits or licenses</li>
-              <li>• Describe your competitive advantage</li>
-            </ul>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="timeline">Launch Timeline</Label>
+          <Input id="timeline" placeholder="e.g., 3 months from funding" />
         </div>
-      </Card>
+      </div>
     </div>
   );
 
   const renderStartedFields = () => (
     <div className="space-y-6">
       <div className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label>Current Revenue ($)</Label>
             <Input
               type="number"
-              value={data.operations?.metrics.revenue || ""}
+              value={data.revenue || ""}
               onChange={(e) =>
                 onUpdate({
                   ...data,
-                  operations: {
-                    ...data.operations,
-                    metrics: {
-                      ...data.operations?.metrics,
-                      revenue: parseInt(e.target.value),
-                    },
-                  },
+                  revenue: parseInt(e.target.value),
                 })
               }
               placeholder="Annual revenue"
@@ -198,17 +158,11 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
             <Label>Customer Base</Label>
             <Input
               type="number"
-              value={data.operations?.metrics.customers || ""}
+              value={data.customerBase || ""}
               onChange={(e) =>
                 onUpdate({
                   ...data,
-                  operations: {
-                    ...data.operations,
-                    metrics: {
-                      ...data.operations?.metrics,
-                      customers: parseInt(e.target.value),
-                    },
-                  },
+                  customerBase: parseInt(e.target.value),
                 })
               }
               placeholder="Number of customers"
@@ -218,20 +172,30 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
             <Label>Growth Rate (%)</Label>
             <Input
               type="number"
-              value={data.operations?.metrics.growth || ""}
+              value={data.growthRate || ""}
               onChange={(e) =>
                 onUpdate({
                   ...data,
-                  operations: {
-                    ...data.operations,
-                    metrics: {
-                      ...data.operations?.metrics,
-                      growth: parseInt(e.target.value),
-                    },
-                  },
+                  growthRate: parseInt(e.target.value),
                 })
               }
               placeholder="Annual growth rate"
+            />
+          </div>
+          <div>
+            <Label htmlFor="employees">Number of Employees</Label>
+            <Input
+              value={data.numberOfEmployees || ""}
+
+              id="employees"
+              onChange={(e) =>
+                onUpdate({
+                  ...data,
+                  numberOfEmployees: parseInt(e.target.value),
+                })
+              }
+              type="number"
+              placeholder="Enter employee count"
             />
           </div>
         </div>
@@ -239,11 +203,11 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
         <div>
           <Label>Business Performance</Label>
           <Textarea
-            value={data.operations?.performance || ""}
+            value={data.performance || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                operations: { ...data.operations, performance: e.target.value },
+                performance: e.target.value,
               })
             }
             placeholder="Describe your current business performance and market position"
@@ -254,11 +218,11 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
         <div>
           <Label>Team & Operations</Label>
           <Textarea
-            value={data.operations?.team || ""}
+            value={data?.team || ""}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                operations: { ...data.operations, team: e.target.value },
+                team: e.target.value,
               })
             }
             placeholder="Describe your team and current operations"
@@ -266,26 +230,8 @@ export function BusinessStageDetails({ data, onUpdate }: BusinessStageDetailsPro
           />
         </div>
       </div>
-
-      <Card className="p-4">
-        <div className="flex items-start gap-4">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Building2 className="h-6 w-6 text-primary" />
-          </div>
-          <div className="space-y-1">
-            <h4 className="font-medium">Business Growth Tips</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Include historical growth metrics</li>
-              <li>• Highlight major achievements</li>
-              <li>• Describe market share and competition</li>
-              <li>• Outline expansion plans</li>
-            </ul>
-          </div>
-        </div>
-      </Card>
     </div>
   );
-
   return (
     <div className="space-y-6">
       <div>

@@ -42,17 +42,6 @@ interface BasicDetailsProps {
 export function BasicDetails({ data, onUpdate }: BasicDetailsProps) {
   const renderIdeaFields = () => (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="marketResearch">Market Research</Label>
-        <Textarea
-          id="marketResearch"
-          value={data.marketResearch}
-          onChange={(e) => onUpdate({ ...data, marketResearch: e.target.value })}
-          placeholder="Describe your market research, target audience, and competitive analysis"
-          rows={4}
-        />
-      </div>
-
       <Card className="p-4">
         <div className="flex items-start gap-4">
           <div className="p-2 bg-primary/10 rounded-lg">
@@ -74,36 +63,6 @@ export function BasicDetails({ data, onUpdate }: BasicDetailsProps) {
 
   const renderStartedBusinessFields = () => (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="currentOperations">Current Operations</Label>
-        <Textarea
-          id="currentOperations"
-          value={data.currentOperations}
-          onChange={(e) => onUpdate({ ...data, currentOperations: e.target.value })}
-          placeholder="Describe your current business operations, revenue, and market position"
-          rows={4}
-        />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="revenue">Current Annual Revenue ($)</Label>
-          <Input
-            id="revenue"
-            type="number"
-            placeholder="Enter current revenue"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="employees">Number of Employees</Label>
-          <Input
-            id="employees"
-            type="number"
-            placeholder="Enter employee count"
-          />
-        </div>
-      </div>
-
       <Card className="p-4">
         <div className="flex items-start gap-4">
           <div className="p-2 bg-primary/10 rounded-lg">
@@ -125,25 +84,6 @@ export function BasicDetails({ data, onUpdate }: BasicDetailsProps) {
 
   const renderUnstartedBusinessFields = () => (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="businessPlan">Business Plan</Label>
-        <Textarea
-          id="businessPlan"
-          value={data.businessPlan}
-          onChange={(e) => onUpdate({ ...data, businessPlan: e.target.value })}
-          placeholder="Outline your business plan, including strategy, operations, and financial projections"
-          rows={4}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="timeline">Launch Timeline</Label>
-        <Input
-          id="timeline"
-          placeholder="e.g., 3 months from funding"
-        />
-      </div>
-
       <Card className="p-4">
         <div className="flex items-start gap-4">
           <div className="p-2 bg-primary/10 rounded-lg">

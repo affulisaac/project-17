@@ -10,14 +10,18 @@ import { BasicDetails } from "./steps/basic-details";
 import { BusinessStageDetails } from "./steps/business-stage-details";
 import { MilestoneCycles } from "./steps/milestone-cycles";
 import { InvestorReturns } from "./steps/investor-returns";
-import { CampaignMedia } from "./steps/campaign-media";
 import { SupportingDocuments } from "./steps/supporting-documents";
 import { CampaignVisibility } from "./steps/campaign-visibility";
 import { CampaignReview } from "./steps/campaign-review";
 import { CampaignSuccess } from "./steps/campaign-success";
-import { Rocket, CheckCircle2 } from "lucide-react";
-import { createCampaign } from "@/app/actions/campaigns";
-import { transformData } from "@/lib/utils";
+import { Rocket } from "lucide-react";
+import { createCampaign, updateCampaign } from "@/app/actions/campaigns";
+import {
+  CampaignBusinessDetails,
+  CampaignCategory,
+  CampaignDetail,
+  CampaignVisibility as CampaignVisibilityType,
+} from "@/types/campaign";
 export type BusinessType = "idea" | "started" | "unstarted";
 export type Milestone = {
   id: string;
@@ -66,12 +70,34 @@ const steps = [
 export function CampaignCreationStepper() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [campaignId, setCampaignId] = useState<string | null>(null);
   const [campaignData, setCampaignData] = useState({
     businessType: "" as BusinessType,
     title: "My Campaign",
     description: "This is the title",
     category: "",
     fundingGoal: 500,
+    marketResearch: "",
+    visibilityType: "public" as "public" | "private",
+    launchTimeline: "",
+    businessStrategy: "",
+    requiredResources: "",
+    returnTac: "",
+    challenges: "",
+    featured: false,
+    revenueModel: "",
+    problemStatement: "",
+    solution: "",
+    customerBase: "",
+    growthRate: "",
+    competitiveAdvantage: "",
+    performance: "",
+    allowMessages: true,
+    showTeamInfo: true,
+    customMessages: "",
+    currentOperations: "",
+    returnPercentage: 0,
+    numberOfEmployees: 0,
     milestones: [] as Milestone[],
     returns: {
       model: "",
@@ -90,14 +116,82 @@ export function CampaignCreationStepper() {
   });
   const { toast } = useToast();
 
-  const handleNext = () => {
-    if(currentStep === 0) {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } 
-  } else {
-    handleSubmit();
-  }
+  const handleNext = async () => {
+    // setCurrentStep(currentStep + 1);
+    // return
+    setIsLoading(true);
+    try {
+      if (currentStep === 1) {
+        const payload = {
+          title: campaignData.title,
+          description: campaignData.description,
+          category: campaignData.category as CampaignCategory,
+          fundingGoal: campaignData.fundingGoal,
+          businessType: campaignData.businessType,
+        };
+        const campaign = campaignId
+          ? await createCampaign<Partial<CampaignDetail>>(payload)
+          : await updateCampaign<Partial<CampaignDetail>>(
+              campaignId as string,
+              payload
+            );
+        setCampaignId(campaign.id);
+      } else if (campaignId) {
+        switch (currentStep) {
+          case 2:
+            await updateCampaign<CampaignBusinessDetails>(campaignId, {
+              problemStatement: campaignData.problemStatement,
+              solution: campaignData.solution,
+              targetMarket: campaignData.customerBase,
+              revenueModel: campaignData.revenueModel,
+              competitiveAdvantage: campaignData.competitiveAdvantage,
+              marketResearch: campaignData.marketResearch,
+              businessPlan: campaignData.businessStrategy,
+              numberOfEmployees: campaignData.numberOfEmployees,
+              launchTimeline: campaignData.launchTimeline,
+              currentOperations: campaignData.currentOperations,
+            });
+            break;
+          case 3:
+            await updateCampaign(campaignId, {
+              returnPercentage: campaignData.returnPercentage,
+              returnTac: campaignData.returnTac,
+            });
+            break;
+          case 4:
+            await updateCampaign(campaignId, {
+              videoUrl: campaignData.videoUrl,
+              pitchDec: campaignData.pitchDec,
+            });
+            break;
+          case 5:
+            await updateCampaign<CampaignVisibilityType>(campaignId, {
+              visibilityType: campaignData.visibilityType,
+              featured: campaignData.featured,
+              allowMessages: campaignData.allowMessages,
+              showTeamInfo: campaignData.showTeamInfo,
+              customMessages: campaignData.customMessages,
+            });
+            break;
+        }
+      }
+
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+        toast({
+          title: "Progress Saved",
+          description: "Your campaign details have been saved successfully.",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save campaign details",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBack = () => {
@@ -110,10 +204,7 @@ export function CampaignCreationStepper() {
     setIsLoading(true);
     console.log(campaignData);
     try {
-      // In a real app, make an API call to submit the campaign
-      const transformedData = transformData(campaignData);
-      console.log(transformedData);
-      const response = await createCampaign(transformedData);
+      const response = await createCampaign(campaignData as any);
       console.log(response);
 
       toast({
@@ -212,28 +303,28 @@ export function CampaignCreationStepper() {
             </Button>
 
             <Button
-              onClick={currentStep === steps.length - 1 ? handleSubmit : handleNext}
+              onClick={
+                currentStep === steps.length - 1 ? handleSubmit : handleNext
+              }
               disabled={!isStepValid() || isLoading}
               className="gap-2"
             >
               {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
-              </>
-              ) : (
-              <>
-                {currentStep === steps.length - 1 ? (
                 <>
-                  <Rocket className="h-4 w-4" />
-                  Launch Campaign
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
                 </>
-                ) :  ( 
-                 <>
-                 {currentStep === 0 ? 'Next' : 'Save and Continue'}
-                 </>
-                )}
-              </>
+              ) : (
+                <>
+                  {currentStep === steps.length - 1 ? (
+                    <>
+                      <Rocket className="h-4 w-4" />
+                      Launch Campaign
+                    </>
+                  ) : (
+                    <>{currentStep === 0 ? "Next" : "Save and Continue"}</>
+                  )}
+                </>
               )}
             </Button>
           </div>

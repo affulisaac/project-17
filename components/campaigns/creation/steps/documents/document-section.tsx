@@ -29,8 +29,7 @@ export function DocumentSection({
       </div>
 
       <div className="space-y-2">
-        {documents?
-          .filter(doc => doc.type === type)
+        {documents?.filter(doc => doc.type === type)
           ?.map((doc) => (
             <div
               key={doc.id}

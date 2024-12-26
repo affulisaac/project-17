@@ -1,28 +1,26 @@
 'use server'
 
-import { Campaign, CampaignCreate } from "@/types/supabase";
 import { campaignService } from "@/services/campaign";
-import { ApiErrorHandler } from "@/lib/errors";
 
 //Get all campaigns
 export async function getCampaign() {}
 
 //Get a campaign by id
-export async function getCampaignById(id: string) {}
+export async function getCampaignById(id: string) {
+   return campaignService.getCampaignById(id)
+}
 
 
-//Create a new campaign
-export async function createCampaign(data: Omit<CampaignCreate, 'id'>) {
-   try {
-      const response = campaignService.createCampaign(data as any)
-      return response
-   } catch (error) {
-   }
-
-} 
+//Create a basic  campaign details
+export async function createCampaign<T = any>(data:  Partial<T>) {
+   
+  return campaignService.createBasicCampaignDetails(data as any)
+}
 
 //Update a campaign
-export async function updateCampaign(id: string, data: Partial<Campaign>) {}
+export async function updateCampaign<T >(id: string, data: Partial<T>) {
+   return campaignService.updateCampaignDetail(id, data)
+}
 
 //Delete a campaign
 export async function deleteCampaign(id: string) {}
