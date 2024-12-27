@@ -1,14 +1,10 @@
 import { CAMPAIGNS } from '@/config/campaign'
-import { saveCampaignBasicDetail, updateCampaignDetail  } from '@/lib/queries/campaign'
-import { transformData } from '@/lib/utils'
-import { Campaign } from '@/types/campaign'
+import { saveCampaignBasicDetail, saveMilestones, updateCampaignDetail, saveReturnProjections } from '@/lib/queries/campaign'
+import { Campaign, CampaignMilestone } from '@/types/campaign'
 import { CampaignDetail } from '@/types/campaign'
 
 export const campaignService = {
 
-  getCampaign() {
-    
-  },
 
   getCampaignById(id: string): Campaign | undefined {
     //get campaign from dummy data
@@ -19,13 +15,17 @@ export const campaignService = {
     return saveCampaignBasicDetail(data as any)
   },
 
+  createMilestone(data: CampaignMilestone[]) {
+    return saveMilestones(data)
+  },
+
+  createReturnProjections(projections: any[]) {
+    return saveReturnProjections(projections)
+  },
+
   updateCampaignDetail<T>(id: string, data: Partial<T>) {
     return updateCampaignDetail(id, data)
   },
-
-  // updateCampaign(id: string, data: Partial<Campaign>) {
-  //   // return campaignService.updateCampaign(id, data)
-  // },
 
   deleteCampaign(id: string) {
     // return campaignService.deleteCampaign(id)

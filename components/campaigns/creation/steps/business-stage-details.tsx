@@ -15,6 +15,7 @@ interface BusinessStageDetailsProps {
     requiredResources: string;
     challenges: string;
     revenue: number;
+    launchTimeline: string;
     customerBase: number;
     growthRate: number;
     performance: string;
@@ -39,7 +40,7 @@ export function BusinessStageDetails({
             onChange={(e) =>
               onUpdate({
                 ...data,
-                concept: { ...data, problemStatement: e.target.value },
+                 problemStatement: e.target.value ,
               })
             }
             placeholder="Describe the problem your idea solves"
@@ -54,7 +55,7 @@ export function BusinessStageDetails({
             onChange={(e) =>
               onUpdate({
                 ...data,
-                concept: { ...data, solution: e.target.value },
+                solution: e.target.value ,
               })
             }
             placeholder="Explain your proposed solution"
@@ -69,7 +70,7 @@ export function BusinessStageDetails({
             onChange={(e) =>
               onUpdate({
                 ...data,
-                concept: { ...data, marketResearch: e.target.value },
+                marketResearch: e.target.value ,
               })
             }
             placeholder="Share your market research findings"
@@ -130,7 +131,13 @@ export function BusinessStageDetails({
 
         <div className="space-y-2">
           <Label htmlFor="timeline">Launch Timeline</Label>
-          <Input id="timeline" placeholder="e.g., 3 months from funding" />
+          <Input  value={data?.launchTimeline || ""}
+            onChange={(e) =>
+              onUpdate({
+                ...data,
+                launchTimeline: e.target.value,
+              })
+            } id="timeline" placeholder="e.g., 3 months from funding" />
         </div>
       </div>
     </div>

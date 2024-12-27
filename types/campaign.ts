@@ -71,6 +71,8 @@ export interface CampaignUpdate {
   }[];
 }
 
+
+
 export interface CampaignMilestone {
   id: string;
   campaignId: string;
@@ -113,10 +115,6 @@ export interface CampaignBusinessDetails {
 export interface CampaignStepThreeData {
   returnPercentage: number;
   returnTac: string;
-}
-
-export interface CampaignMilestone {
-
 }
 export interface CampaignStepFourData {
   videoUrl?: string;

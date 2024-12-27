@@ -23,6 +23,7 @@ export function MilestoneCycles({ data, onUpdate }: MilestoneCyclesProps) {
       milestones: [
         ...(data.milestones || []),
         {
+          campaign_id: data?.id,
           title: "",
           description: "",
           amount: 0,

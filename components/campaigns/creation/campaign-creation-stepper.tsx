@@ -15,23 +15,20 @@ import { CampaignVisibility } from "./steps/campaign-visibility";
 import { CampaignReview } from "./steps/campaign-review";
 import { CampaignSuccess } from "./steps/campaign-success";
 import { Rocket } from "lucide-react";
-import { createCampaign, updateCampaign } from "@/app/actions/campaigns";
+import {
+  createCampaign,
+  createMilestone,
+  updateCampaign,
+  createReturnProjections,
+} from "@/app/actions/campaigns";
 import {
   CampaignBusinessDetails,
   CampaignCategory,
   CampaignDetail,
+  CampaignMilestone,
   CampaignVisibility as CampaignVisibilityType,
 } from "@/types/campaign";
 export type BusinessType = "idea" | "started" | "unstarted";
-export type Milestone = {
-  id: string;
-  title: string;
-  description: string;
-  amount: number;
-  timeline: string;
-  criteria?: string;
-};
-
 const steps = [
   {
     title: "Business Type",
@@ -78,7 +75,6 @@ export function CampaignCreationStepper() {
     category: "",
     fundingGoal: 500,
     marketResearch: "",
-    visibilityType: "public" as "public" | "private",
     launchTimeline: "",
     businessStrategy: "",
     requiredResources: "",
@@ -92,27 +88,19 @@ export function CampaignCreationStepper() {
     growthRate: "",
     competitiveAdvantage: "",
     performance: "",
+    projections: [],
     allowMessages: true,
     showTeamInfo: true,
     customMessages: "",
     currentOperations: "",
     returnPercentage: 0,
     numberOfEmployees: 0,
-    milestones: [] as Milestone[],
-    returns: {
-      model: "",
-      percentage: 0,
-      projections: [],
-      terms: "",
-    },
+    milestones: [] as CampaignMilestone[],
     images: [] as string[],
     video: "",
-    visibility: {
-      type: "public" as "public" | "private",
-      featured: false,
-      allowMessages: true,
-      showTeam: true,
-    },
+    visibility_type: "public" as "public" | "private",
+    allow_messages: true,
+    show_team: true,
   });
   const { toast } = useToast();
 
@@ -129,13 +117,15 @@ export function CampaignCreationStepper() {
           fundingGoal: campaignData.fundingGoal,
           businessType: campaignData.businessType,
         };
+        console.log(campaignId);
         const campaign = campaignId
-          ? await createCampaign<Partial<CampaignDetail>>(payload)
-          : await updateCampaign<Partial<CampaignDetail>>(
+          ? await updateCampaign<Partial<CampaignDetail>>(
               campaignId as string,
               payload
-            );
+            )
+          : await createCampaign<Partial<CampaignDetail>>(payload);
         setCampaignId(campaign.id);
+        console.log(campaign);
       } else if (campaignId) {
         switch (currentStep) {
           case 2:
@@ -143,6 +133,9 @@ export function CampaignCreationStepper() {
               problemStatement: campaignData.problemStatement,
               solution: campaignData.solution,
               targetMarket: campaignData.customerBase,
+              challenges: campaignData.challenges,
+              requiredResources: campaignData.requiredResources,
+              // businessStrategy: campaignData.businessStrategy,
               revenueModel: campaignData.revenueModel,
               competitiveAdvantage: campaignData.competitiveAdvantage,
               marketResearch: campaignData.marketResearch,
@@ -153,25 +146,43 @@ export function CampaignCreationStepper() {
             });
             break;
           case 3:
-            await updateCampaign(campaignId, {
-              returnPercentage: campaignData.returnPercentage,
-              returnTac: campaignData.returnTac,
-            });
+            campaignData.milestones.forEach(
+              (milestone) => (milestone.campaign_id = campaignId)
+            );
+            await createMilestone(campaignData.milestones);
             break;
           case 4:
-            await updateCampaign(campaignId, {
-              videoUrl: campaignData.videoUrl,
-              pitchDec: campaignData.pitchDec,
-            });
+            const payload = {
+              revenueModel: campaignData.revenueModel,
+              returnPercentage: campaignData.returnPercentage,
+              returnTac: campaignData.returnTac,
+            };
+            campaignData.projections.forEach(
+              (projection) => (projection.campaign_id = campaignId)
+            );
+            console.log(campaignData.projections);
+            await updateCampaign(campaignId, payload);
+            await createReturnProjections(campaignData.projections);
             break;
           case 5:
-            await updateCampaign<CampaignVisibilityType>(campaignId, {
-              visibilityType: campaignData.visibilityType,
+            // await updateCampaign<CampaignVisibilityType>(campaignId, {
+            //   visibilityType: campaignData.visibilityType,
+            //   featured: campaignData.featured,
+            //   allowMessages: campaignData.allowMessages,
+            //   showTeamInfo: campaignData.showTeamInfo,
+            //   customMessages: campaignData.customMessages,
+            // });
+            break;
+          case 6:
+            const visibilityPayload = {
+              visibility_type: campaignData.visibility_type,
               featured: campaignData.featured,
-              allowMessages: campaignData.allowMessages,
-              showTeamInfo: campaignData.showTeamInfo,
-              customMessages: campaignData.customMessages,
-            });
+              allow_messages: campaignData.allow_messages,
+              show_team: campaignData.show_team,
+              custom_messages: campaignData.custom_messages,
+            };
+            console.log(visibilityPayload);
+            await updateCampaign(campaignId, visibilityPayload);
             break;
         }
       }
@@ -204,7 +215,10 @@ export function CampaignCreationStepper() {
     setIsLoading(true);
     console.log(campaignData);
     try {
-      const response = await createCampaign(campaignData as any);
+      console.log(campaignId, { status: "submitted" });
+      const response = await updateCampaign(campaignId as string, {
+        status: "submitted",
+      });
       console.log(response);
 
       toast({
@@ -213,7 +227,7 @@ export function CampaignCreationStepper() {
       });
 
       // Show success page
-      // setCurrentStep(steps.length);
+      setCurrentStep(steps.length);
     } catch (error) {
       console.log(error);
       toast({
@@ -254,7 +268,13 @@ export function CampaignCreationStepper() {
   };
 
   if (currentStep === steps.length) {
-    return <CampaignSuccess />;
+    return (
+      <div className="p-6 md:ml-64">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <CampaignSuccess />;
+        </div>
+      </div>
+    );
   }
 
   const CurrentStepComponent = steps[currentStep].component;

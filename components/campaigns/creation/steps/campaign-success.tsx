@@ -11,6 +11,7 @@ interface CampaignSuccessProps {
 
 export function CampaignSuccess({ campaignId }: CampaignSuccessProps) {
   return (
+    <div className="space-y-6">
     <div className="max-w-2xl mx-auto text-center">
       <div className="mb-8">
         <div className="flex justify-center">
@@ -58,6 +59,7 @@ export function CampaignSuccess({ campaignId }: CampaignSuccessProps) {
           </Link>
         </Button>
       </div>
+    </div>
     </div>
   );
 }

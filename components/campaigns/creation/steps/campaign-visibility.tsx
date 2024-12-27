@@ -10,40 +10,37 @@ import { Globe, Lock, AlertCircle } from "lucide-react";
 
 interface CampaignVisibilityProps {
   data: {
-    visibility?: {
-      type: "public" | "private";
+      visibility_type: "public" | "private";
       featured?: boolean;
-      allowMessages?: boolean;
-      showTeam?: boolean;
-      invitedEmails?: string[];
-      customMessage?: string;
-    };
+      allow_messages?: boolean;
+      show_team?: boolean;
+      invited_emails?: string[];
+      custom_message?: string;
   };
   onUpdate: (data: any) => void;
 }
 
 export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) {
-  const visibility = data.visibility || {
-    type: "public",
+  const visibility = data || {
+    visibility_type: "public",
     featured: false,
-    allowMessages: true,
-    showTeam: true,
+    allow_messages: true,
+    show_team: true,
   };
+
+  console.log(visibility);
 
   const handleVisibilityChange = (type: "public" | "private") => {
     onUpdate({
       ...data,
-      visibility: { ...visibility, type },
+      ...visibility, type ,
     });
   };
 
   const handleToggle = (field: keyof typeof visibility) => {
     onUpdate({
       ...data,
-      visibility: {
-        ...visibility,
         [field]: !visibility[field],
-      },
     });
   };
 
@@ -59,7 +56,7 @@ export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) 
       <div className="grid gap-6 md:grid-cols-2">
         <Card
           className={`p-6 cursor-pointer transition-all ${
-            visibility.type === "public"
+            visibility.visibility_type === "public"
               ? "ring-2 ring-primary"
               : "hover:bg-accent"
           }`}
@@ -83,7 +80,7 @@ export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) 
 
         <Card
           className={`p-6 cursor-pointer transition-all ${
-            visibility.type === "private"
+            visibility.visibility_type === "private"
               ? "ring-2 ring-primary"
               : "hover:bg-accent"
           }`}
@@ -106,7 +103,7 @@ export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) 
       <Card className="p-6">
         <h3 className="font-semibold mb-4">Visibility Settings</h3>
         <div className="space-y-6">
-          {visibility.type === "public" && (
+          {visibility.visibility_type === "public" && (
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Featured Campaign</Label>
@@ -129,8 +126,8 @@ export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) 
               </p>
             </div>
             <Switch
-              checked={visibility.allowMessages}
-              onCheckedChange={() => handleToggle("allowMessages")}
+              checked={visibility.allow_messages}
+              onCheckedChange={() => handleToggle("allow_messages")}
             />
           </div>
 
@@ -142,14 +139,14 @@ export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) 
               </p>
             </div>
             <Switch
-              checked={visibility.showTeam}
-              onCheckedChange={() => handleToggle("showTeam")}
+              checked={visibility.show_team}
+              onCheckedChange={() => handleToggle("show_team")}
             />
           </div>
         </div>
       </Card>
 
-      {visibility.type === "private" && (
+      {visibility.visibility_type === "private" && (
         <Card className="p-6 space-y-6">
           <div>
             <Label>Invited Investors</Label>
@@ -158,7 +155,7 @@ export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) 
             </p>
             <Textarea
               placeholder="Enter email addresses (one per line)"
-              value={visibility.invitedEmails?.join("\n") || ""}
+              value={visibility.invited_emails?.join("\n") || ""}
               onChange={(e) =>
                 onUpdate({
                   ...data,
@@ -179,7 +176,7 @@ export function CampaignVisibility({ data, onUpdate }: CampaignVisibilityProps) 
             </p>
             <Textarea
               placeholder="Enter your message to invited investors..."
-              value={visibility.customMessage || ""}
+              value={visibility.custom_message || ""}
               onChange={(e) =>
                 onUpdate({
                   ...data,

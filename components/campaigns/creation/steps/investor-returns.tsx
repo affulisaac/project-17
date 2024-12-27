@@ -18,15 +18,13 @@ import {
 
 interface InvestorReturnsProps {
   data: {
-    returns: {
-      model: "profit-sharing" | "equity" | "revenue-sharing";
-      percentage: number;
-      projections: {
-        year: number;
-        amount: number;
-      }[];
-      terms: string;
-    };
+    revenueModel: "profit-sharing" | "equity" | "revenue-sharing";
+    returnPercentage: number;
+    projections: {
+      year: number;
+      amount: number;
+    }[];
+    returnTac: string;
   };
   onUpdate: (data: any) => void;
 }
@@ -34,32 +32,32 @@ interface InvestorReturnsProps {
 export function InvestorReturns({ data, onUpdate }: InvestorReturnsProps) {
   const handleAddProjection = () => {
     const newProjections = [
-      ...data.returns.projections,
-      { year: data.returns.projections.length + 1, amount: 0 },
+      ...data.projections,
+      { year: data.projections.length + 1, amount: 0 },
     ];
     onUpdate({
       ...data,
-      returns: { ...data.returns, projections: newProjections },
+     projections: newProjections ,
     });
   };
 
   const handleRemoveProjection = (index: number) => {
-    const newProjections = [...data.returns.projections];
+    const newProjections = [...data.projections];
     newProjections.splice(index, 1);
     // Update year numbers for remaining projections
     newProjections.forEach((p, i) => (p.year = i + 1));
     onUpdate({
       ...data,
-      returns: { ...data.returns, projections: newProjections },
+      projections: newProjections ,
     });
   };
 
   const updateProjection = (index: number, amount: number) => {
-    const newProjections = [...data.returns.projections];
+    const newProjections = [...data.projections];
     newProjections[index] = { ...newProjections[index], amount };
     onUpdate({
       ...data,
-      returns: { ...data.returns, projections: newProjections },
+       projections: newProjections ,
     });
   };
 
@@ -77,11 +75,13 @@ export function InvestorReturns({ data, onUpdate }: InvestorReturnsProps) {
           <div>
             <Label>Return Model</Label>
             <Select
-              value={data.returns.model}
-              onValueChange={(value: "profit-sharing" | "equity" | "revenue-sharing") =>
+              value={data.revenueModel}
+              onValueChange={(
+                value: "profit-sharing" | "equity" | "revenue-sharing"
+              ) =>
                 onUpdate({
                   ...data,
-                  returns: { ...data.returns, model: value },
+                  revenueModel: value,
                 })
               }
             >
@@ -102,14 +102,11 @@ export function InvestorReturns({ data, onUpdate }: InvestorReturnsProps) {
               type="number"
               min="0"
               max="100"
-              value={data.returns.percentage || ""}
+              value={data.returnPercentage || ""}
               onChange={(e) =>
                 onUpdate({
                   ...data,
-                  returns: {
-                    ...data.returns,
-                    percentage: parseFloat(e.target.value),
-                  },
+                  returnPercentage: parseFloat(e.target.value),
                 })
               }
               placeholder="Enter return percentage"
@@ -133,7 +130,7 @@ export function InvestorReturns({ data, onUpdate }: InvestorReturnsProps) {
         </div>
 
         <div className="space-y-4">
-          {data.returns.projections.map((projection, index) => (
+          {data.projections.map((projection, index) => (
             <div
               key={index}
               className="flex items-center gap-4 p-4 border rounded-lg"
@@ -164,7 +161,7 @@ export function InvestorReturns({ data, onUpdate }: InvestorReturnsProps) {
             </div>
           ))}
 
-          {data.returns.projections.length === 0 && (
+          {data.projections.length === 0 && (
             <div className="text-center py-6 text-muted-foreground">
               No projections added
             </div>
@@ -176,11 +173,11 @@ export function InvestorReturns({ data, onUpdate }: InvestorReturnsProps) {
         <div>
           <Label>Return Terms & Conditions</Label>
           <Textarea
-            value={data.returns.terms}
+            value={data.returnTac}
             onChange={(e) =>
               onUpdate({
                 ...data,
-                returns: { ...data.returns, terms: e.target.value },
+                returnTac: e.target.value,
               })
             }
             placeholder="Describe the terms and conditions of your return model..."
